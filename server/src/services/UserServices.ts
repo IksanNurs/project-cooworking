@@ -55,23 +55,18 @@ class UserServices implements IUserServices {
         };
     }
 
-    async updateProfile(
-        user_id: number, 
-        data: Partial<IUserSaveRequest>,
-        currentPassword: string
-    ): Promise<string> {
+    async updateProfile(user_id: number, data: Partial<IUserSaveRequest>): Promise<string> {
         const user = await userRepository.findOneBy({ user_id });
         if (!user) {
             throw new Error("User tidak ditemukan");
         }
 
-        const verifyPass = await bcrypt.compare(currentPassword, user.password);
-        if (!verifyPass) {
-            throw new Error("Password saat ini salah");
-        }
-
+        // If password is provided, hash it
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);
+        } else {
+            // Remove password field if empty
+            delete data.password;
         }
 
         await userRepository.update(user_id, data);
@@ -101,6 +96,55 @@ class UserServices implements IUserServices {
             password += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         return password;
+    }
+
+    async getAllUsers(): Promise<User[]> {
+        try {
+            const users = await userRepository.find({
+                select: {
+                    user_id: true,
+                    nama: true,
+                    email: true,
+                    role: true,
+                    no_telp: true,
+                    tanggal_daftar: true,
+                    created_at: true,
+                    updated_at: true
+                }
+            });
+            return users;
+        } catch (error) {
+            throw new Error("Gagal mengambil data users");
+        }
+    }
+
+    async updateUser(userId: number, data: Partial<IUserSaveRequest>): Promise<User> {
+        const user = await userRepository.findOneBy({ user_id: userId });
+        if (!user) {
+            throw new Error("User tidak ditemukan");
+        }
+
+        if (data.password) {
+            data.password = await bcrypt.hash(data.password, 10);
+        }
+
+        await userRepository.update(userId, data);
+        
+        const updatedUser = await userRepository.findOneBy({ user_id: userId });
+        if (!updatedUser) {
+            throw new Error("Gagal mengambil data user yang diperbarui");
+        }
+
+        return updatedUser;
+    }
+
+    async deleteUser(userId: number): Promise<void> {
+        const user = await userRepository.findOneBy({ user_id: userId });
+        if (!user) {
+            throw new Error("User tidak ditemukan");
+        }
+
+        await userRepository.delete(userId);
     }
 }
 

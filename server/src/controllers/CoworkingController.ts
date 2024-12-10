@@ -78,6 +78,17 @@ class CoworkingController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+    async getAvailableRooms(req: Request, res: Response, coworkingServices: ICoworkingServices) {
+        try {
+            // Remove any parameter dependencies since we just want all available rooms
+            const rooms = await coworkingServices.getAvailableRooms();
+            return res.status(200).json(rooms);
+        } catch (error: any) {
+            console.error('Controller error:', error);
+            return res.status(500).json({ message: error.message });
+        }
+    }
 }
 
 const coworkingController = new CoworkingController();

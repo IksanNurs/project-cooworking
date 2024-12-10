@@ -21,6 +21,11 @@ module.exports = {
       attentionBackground: '#e7b3b3'
     },
     screens: {
+      'xs': '480px', // Menambahkan breakpoint khusus untuk ukuran layar 480px
+      'sm': '640px',  // 640px (default)
+      'md': '768px',  // 768px (default)
+      'lg': '1024px', // 1024px (default)
+      'xl': '1280px', // 1280px (default)
       'mobile': { 'max': '500px' },
       'mobileHome': { 'max': '1100px' },
       'mobileSignup': { 'max': '500px' },

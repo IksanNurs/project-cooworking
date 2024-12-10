@@ -90,7 +90,7 @@ export const LoginForm = () => {
                     {loginActivate && (<div className="text-center rounded-lg text-buttonText w-64 h-12 mx-auto bg-attentionBackground border-attention border-2 font-open font-bold text-sm pt-[0.2rem]">
                         Account needs to be activated. Check your email.
                     </div>)}
-                    <Dialog.Root>
+                    {/* <Dialog.Root>
                         <Dialog.Trigger>
                             <div className="w-40 ml-[11.5rem] mobileHome:ml-[10rem]">
                                 <a className="font-open font-semibold text-sm hover:underline text-main" href="#">Forgot password?</a>
@@ -116,7 +116,7 @@ export const LoginForm = () => {
                                 </div>
                             </Dialog.Content>
                         </Dialog.Portal>
-                    </Dialog.Root>
+                    </Dialog.Root> */}
                     <button disabled={isSubmitting} className={`w-36 mx-auto h-12 rounded-full font-extrabold from-buttonText ${isSubmitting ? 'bg-disabled scale-105' : 'bg-highlight hover:bg-[#FFB340] hover:scale-105 duration-300'}`} type="submit">
                         {isSubmitting ? <ThreeDots
                             height="20"

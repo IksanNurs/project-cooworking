@@ -50,22 +50,68 @@ class UserControllers {
             return res.status(500).json(error);
         }
     }
-
     async updateProfile(req: Request, res: Response, userServices: IUserServices) {
         try {
-            const { user_id, currentPassword, ...updateData } = req.body;
-            const result = await userServices.updateProfile(user_id, updateData, currentPassword);
+            const { user_id, nama, email, no_telp, password } = req.body;
+            const result = await userServices.updateProfile(user_id, { 
+                nama, 
+                email, 
+                no_telp,
+                password: password || undefined 
+            });
             return res.status(200).json({ message: result });
         } catch (error: any) {
             return res.status(400).json({ message: error.message });
         }
     }
+    
 
     async getPassword(req: Request, res: Response, userServices: IUserServices) {
         try {
             const email = req.params.email;
             const result = await userServices.getPassword(email);
             return res.status(200).json({ message: result });
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsers(req: Request, res: Response, userServices: IUserServices) {
+        try {
+            const users = await userServices.getAllUsers();
+            return res.status(200).json(users);
+        } catch (error: any) {
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async createUser(req: Request, res: Response, userServices: IUserServices) {
+        try {
+            const { nama, email, password, no_telp, role } = req.body;
+            const result = await userServices.save({ nama, email, password, no_telp, role });
+            const { password: _, ...user } = result;
+            return res.status(201).json(user);
+        } catch (error: any) {
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async updateUser(req: Request, res: Response, userServices: IUserServices) {
+        try {
+            const userId = Number(req.params.id);
+            const { nama, email, role, no_telp } = req.body;
+            const result = await userServices.updateUser(userId, { nama, email, role, no_telp });
+            return res.status(200).json(result);
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
+    async deleteUser(req: Request, res: Response, userServices: IUserServices) {
+        try {
+            const userId = Number(req.params.id);
+            await userServices.deleteUser(userId);
+            return res.status(200).json({ message: "User berhasil dihapus" });
         } catch (error: any) {
             return res.status(400).json({ message: error.message });
         }

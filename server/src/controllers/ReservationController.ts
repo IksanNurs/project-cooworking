@@ -48,10 +48,20 @@ class ReservationController {
         }
     }
 
-    async getAvailableRooms(req: Request, res: Response, reservationServices: IReservationServices) {
+    async updateReservasi(req: Request, res: Response, reservationServices: IReservationServices) {
+        try {
+            const { user_id, reservation_id } = req.body;
+            await reservationServices.updateReservasi(reservation_id, user_id);
+            return res.status(200).json({ message: "Reservasi berhasil dibatalkan" });
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAvailableReservationRooms(req: Request, res: Response, reservationServices: IReservationServices) {
         try {
             const { waktu_mulai, waktu_selesai } = req.query;
-            const availableRooms = await reservationServices.getAvailableRooms(
+            const availableRooms = await reservationServices.getAvailableReservationRooms(
                 new Date(waktu_mulai as string),
                 new Date(waktu_selesai as string)
             );
@@ -64,6 +74,16 @@ class ReservationController {
     async getAllReservations(req: Request, res: Response, reservationServices: IReservationServices) {
         try {
             const reservations = await reservationServices.getAllReservations();
+            return res.status(200).json(reservations);
+        } catch (error: any) {
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    async getAllReservationsUser(req: Request, res: Response, reservationServices: IReservationServices) {
+        try {
+            const user_id = Number(req.params.user_id);
+            const reservations = await reservationServices.getAllReservationsUser(user_id);
             return res.status(200).json(reservations);
         } catch (error: any) {
             return res.status(500).json({ message: error.message });
@@ -83,16 +103,11 @@ class ReservationController {
         try {
             const reservation_id = Number(req.params.reservation_id);
             const { status } = req.body;
-            
-            const user = req.user as User;
-            if (!user || !user.user_id) {
-                return res.status(401).json({ message: "User ID tidak ditemukan" });
-            }
+    
 
             const result = await reservationServices.updateStatusReservasi(
                 reservation_id,
                 status,
-                user.user_id
             );
             return res.status(200).json(result);
         } catch (error: any) {

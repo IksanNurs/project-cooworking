@@ -13,15 +13,16 @@ export default interface IReservationServices {
     getReservationsByUser(user_id: number): Promise<Reservation[]>;
     verifikasiPembayaran(reservation_id: number): Promise<Reservation>;
     batalkanReservasi(reservation_id: number): Promise<void>;
-    getAvailableRooms(waktu_mulai: Date, waktu_selesai: Date): Promise<any>;
+    updateReservasi(reservation_id: number, user_id: number): Promise<void>;
+    getAvailableReservationRooms(waktu_mulai: Date, waktu_selesai: Date): Promise<any>;
     
     // Tambahkan method untuk admin
     getAllReservations(): Promise<Reservation[]>;
+    getAllReservationsUser(user_id: number): Promise<Reservation[]>;
     getPendingReservations(): Promise<Reservation[]>;
     updateStatusReservasi(
         reservation_id: number,
         status: string,
-        admin_id: number
     ): Promise<Reservation>;
     getDashboardStats(): Promise<{
         totalReservasi: number;

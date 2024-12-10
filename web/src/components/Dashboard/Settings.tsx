@@ -41,7 +41,7 @@ export const Settings = () => {
                        
                         <div className='flex flex-row items-center gap-2 font-open text-paragraph'>
                             <ShareNetwork className="inline" size={25} color="#e8e4e6" />
-                            <p>{user.role}</p>
+                            <p>{user.no_telp}</p>
                         </div>
                     </div>
                     <div>

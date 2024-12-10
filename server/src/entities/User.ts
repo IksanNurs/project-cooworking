@@ -6,7 +6,7 @@ export class User {
     user_id: number
 
     @Column({ type: 'text', nullable: false })
-    nama: string
+    nama: string 
 
     @Column({ type: 'text', nullable: false, unique: true })
     email: string

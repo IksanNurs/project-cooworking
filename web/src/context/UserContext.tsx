@@ -7,7 +7,8 @@ export const USER_DEFAULT = {
         user_id: 0,
         nama: '',
         email: '',
-        role: '',
+        no_telp: '',
+        role: ''
     },
     token: '',
     authenticated: false,
@@ -56,12 +57,13 @@ export const UserProvider = (props: any) => {
                     "Authorization": `Bearer ${token}`
                 }
             }).then(res => {
-                const { user_id, nama, email, role} = res.data;
+                const { user_id, nama, email, no_telp, role} = res.data;
                 setUser({
                     user_id,
                     nama,
                     email,
-                    role,
+                    no_telp,
+                    role: role
                 })
                 setAuthenticated(true);
                 setSessionExpired(false);

@@ -27,7 +27,6 @@ export class default1669299752104 implements MigrationInterface {
             "reservation_id" SERIAL PRIMARY KEY,
             "user_id" integer NOT NULL,
             "coworking_id" integer NOT NULL,
-            "id_admin" integer NOT NULL,
             "waktu_mulai" TIMESTAMP NOT NULL,
             "waktu_selesai" TIMESTAMP NOT NULL,
             "status_reservasi" text NOT NULL
@@ -35,19 +34,11 @@ export class default1669299752104 implements MigrationInterface {
 
         await queryRunner.query(`CREATE TABLE "review" (
             "review_id" SERIAL PRIMARY KEY,
-            "coworking_id" integer NOT NULL,
+            "reservation_id" integer NOT NULL,
             "komentar" text,
             "tanggal_review" date NOT NULL
         )`);
 
-        await queryRunner.query(`CREATE TABLE "payment" (
-            "payment_id" SERIAL PRIMARY KEY,
-            "jumlah_pembayaran" decimal(10,2) NOT NULL,
-            "metode_pembayaran" text NOT NULL,
-            "waktu_pembayaran" TIMESTAMP NOT NULL,
-            "status_pembayaran" text NOT NULL,
-            "reservation_id" integer NOT NULL
-        )`);
 
         await queryRunner.query(`CREATE TABLE "notification" (
             "notification_id" SERIAL PRIMARY KEY,
@@ -62,13 +53,57 @@ export class default1669299752104 implements MigrationInterface {
         // Menambahkan foreign key constraints
         await queryRunner.query(`ALTER TABLE "reservation" ADD CONSTRAINT "FK_user_reservation" FOREIGN KEY ("user_id") REFERENCES "users"("user_id")`);
         await queryRunner.query(`ALTER TABLE "reservation" ADD CONSTRAINT "FK_coworking_reservation" FOREIGN KEY ("coworking_id") REFERENCES "coworking"("coworking_id")`);
-        await queryRunner.query(`ALTER TABLE "payment" ADD CONSTRAINT "FK_reservation_payment" FOREIGN KEY ("reservation_id") REFERENCES "reservation"("reservation_id")`);
-        await queryRunner.query(`ALTER TABLE "review" ADD CONSTRAINT "FK_coworking_review" FOREIGN KEY ("coworking_id") REFERENCES "coworking"("coworking_id")`);
+        await queryRunner.query(`ALTER TABLE "review" ADD CONSTRAINT "FK_reservation_review" FOREIGN KEY ("reservation_id") REFERENCES "reservation"("reservation_id")`);
         await queryRunner.query(`ALTER TABLE "notification" ADD CONSTRAINT "FK_user_notification" FOREIGN KEY ("user_id") REFERENCES "users"("user_id")`);
+        // Add admin user seeder
+        await queryRunner.query(`
+            INSERT INTO "users" (
+                nama,
+                email,
+                password,
+                tanggal_daftar,
+                no_telp,
+                role,
+                created_at,
+                updated_at
+            ) VALUES (
+                'Admin',
+                'admin@admin.com',
+                '$2b$10$8jVTJJZ8YuWISZbMoYTbU.LJ0XvDKf3P0XTA/Azl.LPwSJb2agHwK',
+                CURRENT_DATE,
+                '081234567890',
+                'admin',
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP
+            );
+        `);
+        await queryRunner.query(`
+            INSERT INTO "users" (
+                nama,
+                email,
+                password,
+                tanggal_daftar,
+                no_telp,
+                role,
+                created_at,
+                updated_at
+            ) VALUES (
+                'User',
+                'user@gmail.com',
+                '$2b$10$8jVTJJZ8YuWISZbMoYTbU.LJ0XvDKf3P0XTA/Azl.LPwSJb2agHwK',
+                CURRENT_DATE,
+                '081234567893',
+                'user',
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP
+            );
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE "payment"`);
+        // Remove seeded admin user
+        await queryRunner.query(`DELETE FROM "users" WHERE email = 'admin@admin.com';`);
+        await queryRunner.query(`DELETE FROM "users" WHERE email = 'user@gmail.com';`);
         await queryRunner.query(`DROP TABLE "review"`);
         await queryRunner.query(`DROP TABLE "reservation"`);
         await queryRunner.query(`DROP TABLE "coworking"`);
@@ -76,3 +111,5 @@ export class default1669299752104 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "notification"`);
     }
 }
+
+

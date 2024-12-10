@@ -11,6 +11,8 @@ import coworkingController from "./controllers/CoworkingController";
 import coworkingServices from "./services/CoworkingServices";
 import paymentController from "./controllers/PaymentController";
 import paymentServices from "./services/PaymentServices";
+import reviewController from "./controllers/ReviewController";
+import reviewServices from "./services/ReviewServices";
 
 
 const routes = Router();
@@ -27,6 +29,10 @@ routes.use(authMiddleware);
 routes.get('/profile', (req: Request, res: Response) => { userControllers.getProfile(req, res) });
 routes.post('/profile/update', (req: Request, res: Response) => { userControllers.updateProfile(req, res, userServices); });
 // Reservation routes
+routes.get('/reservasi/all/:user_id', (req: Request, res: Response) => {
+    reservationController.getAllReservationsUser(req, res, reservationServices);
+});
+
 routes.post('/reservasi', (req: Request, res: Response) => { 
     reservationController.create(req, res, reservationServices); 
 });
@@ -39,12 +45,16 @@ routes.post('/reservasi/:reservation_id/verifikasi', (req: Request, res: Respons
     reservationController.verifikasiPembayaran(req, res, reservationServices); 
 });
 
-routes.delete('/reservasi/:reservation_id', (req: Request, res: Response) => { 
+routes.get('/reservasi/reject/:reservation_id', (req: Request, res: Response) => { 
     reservationController.batalkanReservasi(req, res, reservationServices); 
 });
 
+routes.put('/reservasi/update', (req: Request, res: Response) => { 
+    reservationController.updateReservasi(req, res, reservationServices); 
+});
+
 routes.get('/reservasi/available', (req: Request, res: Response) => { 
-    reservationController.getAvailableRooms(req, res, reservationServices); 
+    reservationController.getAvailableReservationRooms(req, res, reservationServices); 
 });
 
 // Notification routes
@@ -70,6 +80,7 @@ routes.get('/admin/dashboard/stats', (req: Request, res: Response) => {
 routes.get('/admin/reservasi', (req: Request, res: Response) => {
     reservationController.getAllReservations(req, res, reservationServices);
 });
+
 
 routes.get('/admin/reservasi/pending', (req: Request, res: Response) => {
     reservationController.getPendingReservations(req, res, reservationServices);
@@ -104,6 +115,10 @@ routes.patch('/admin/coworking/:coworking_id/status', (req: Request, res: Respon
     coworkingController.updateRoomStatus(req, res, coworkingServices);
 });
 
+routes.get('/coworking/available', authMiddleware, (req: Request, res: Response) => {
+    coworkingController.getAvailableRooms(req, res, coworkingServices);
+});
+
 // Payment routes untuk admin
 routes.get('/admin/payments', (req: Request, res: Response) => {
     paymentController.getAllPayments(req, res, paymentServices);
@@ -125,4 +140,33 @@ routes.get('/admin/payments/stats', (req: Request, res: Response) => {
     paymentController.getPaymentStats(req, res, paymentServices);
 });
 
+// Admin User Management Routes
+routes.get('/admin/users', adminAuthMiddleware, (req: Request, res: Response) => {
+    userControllers.getAllUsers(req, res, userServices);
+});
+
+routes.post('/admin/users', adminAuthMiddleware, (req: Request, res: Response) => {
+    userControllers.createUser(req, res, userServices);
+});
+
+routes.put('/admin/users/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+    userControllers.updateUser(req, res, userServices);
+});
+
+routes.delete('/admin/users/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+    userControllers.deleteUser(req, res, userServices);
+});
+
+// Review routes
+routes.post('/review', authMiddleware, (req: Request, res: Response) => {
+    reviewController.createReview(req, res, reviewServices);
+});
+
+routes.get('/review/room/:coworking_id', authMiddleware, (req: Request, res: Response) => {
+    reviewController.getReviewsByRoom(req, res, reviewServices);
+});
+
+
 export default routes;
+
+

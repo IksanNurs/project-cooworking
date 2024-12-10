@@ -53,7 +53,24 @@ class CoworkingServices implements ICoworkingServices {
 
         return await coworkingRepository.save(room);
     }
+
+    async getAvailableRooms(): Promise<Coworking[]> {
+        try {
+            // Only get rooms with status 'tersedia'
+            return await coworkingRepository.find({
+                where: { status_ruang: 'available' },
+                order: { coworking_id: 'ASC' }
+            });
+        } catch (error) {
+            console.error('Service error:', error);
+            throw error;
+        }
+    }
+    
+    
+    
 }
 
 const coworkingServices = new CoworkingServices();
 export default coworkingServices; 
+

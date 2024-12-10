@@ -1,5 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { User } from "./User";
+import { Reservation } from './Reservation'; // Import entitas Reservation
+
 
 @Entity('coworking')
 export class Coworking {
@@ -18,4 +20,11 @@ export class Coworking {
     @ManyToOne(() => User)
     @JoinColumn({ name: 'id_admin' })
     admin: User;
+
+    @OneToMany(() => Reservation, (reservation) => reservation.coworking)
+    reservations: Reservation[]; // Relasi satu ke banyak dengan Reservation
 } 
+
+
+
+

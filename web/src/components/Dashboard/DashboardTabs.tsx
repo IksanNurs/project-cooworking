@@ -1,40 +1,90 @@
 import * as Tabs from '@radix-ui/react-tabs';
 import { useState } from 'react';
-import { BookingTab } from './BookingTab/BookingTab';
-import { LastBookingsTab } from './LastBookingsTag/LastBookingsTab';
-import { UpcomingBookingsTab } from './UpcomingBookingsTab/UpcomingBookingsTab';
+import { BookingTab, ReservationTab } from './ReservationTab/ReservationTab';
+import { UpcomingBookingsTab } from './UpcomingReservationsTab/UpcomingReservationsTab';
+import { useUser } from '../../context/UserContext';
+import { AdminReservationTab } from './AdminTab/AdminReservationTab';
+import { AdminPaymentTab } from './AdminTab/AdminPaymentTab';
+import { AdminCoworkingTab } from './AdminTab/AdminCoworkingTab';
+import { AdminUserTab } from './AdminTab/AdminUserTab';
+import { NotificationTab } from './NotificationTab/NotificationTab';
 
 export const DashboardTabs = () => {
-    const [tabOpen, setTabOpen] = useState<boolean[]>([true, false, false]);
+    const { user } = useUser();
+    const [tabOpen, setTabOpen] = useState<boolean[]>(user.role === 'admin' ? [true, false, false, false] : [true, false, false]);
 
     const openTab = (tab: number) => {
-        const newTabOpen: boolean[] = [false, false, false];
+        const newTabOpen: boolean[] = user.role === 'admin' ? [false, false, false, false] : [false, false, false];
         newTabOpen[tab] = true;
         setTabOpen(newTabOpen);
     }
 
     return (
-        <Tabs.Root className="flex flex-col w-5/6 mx-auto py-8" defaultValue="booking">
+        <Tabs.Root className="flex flex-col w-5/6 mx-auto py-8" defaultValue="tab1">
             <Tabs.List className="flex" aria-label="Manage your account">
-                <Tabs.Trigger onClick={() => openTab(0)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[0] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="booking">
-                    Booking
-                </Tabs.Trigger>
-                <Tabs.Trigger onClick={() => openTab(1)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[1] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="current">
-                    Upcoming Bookings
-                </Tabs.Trigger>
-                <Tabs.Trigger onClick={() => openTab(2)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[2] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="last">
-                    Last Bookings
-                </Tabs.Trigger>
+                {user.role === 'admin' ? (
+                    // Admin Tabs
+                    <>
+                        <Tabs.Trigger onClick={() => openTab(0)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[0] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab1">
+                            Reservations
+                        </Tabs.Trigger>
+                        {/* <Tabs.Trigger onClick={() => openTab(1)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[1] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab2">
+                            Payments
+                        </Tabs.Trigger> */}
+                        <Tabs.Trigger onClick={() => openTab(2)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[2] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab3">
+                            Coworking
+                        </Tabs.Trigger>
+                        <Tabs.Trigger onClick={() => openTab(3)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[3] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab4">
+                            Users
+                        </Tabs.Trigger>
+                    </>
+                ) : (
+                    // User Tabs
+                    <>
+                        <Tabs.Trigger onClick={() => openTab(0)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[0] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab1">
+                            Reservation
+                        </Tabs.Trigger>
+                        <Tabs.Trigger onClick={() => openTab(1)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[1] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab2">
+                            Riwayat Reservations
+                        </Tabs.Trigger>
+                        <Tabs.Trigger onClick={() => openTab(3)} className={`px-4 flex h-12 items-center justify-center border-b ${tabOpen[3] ? 'text-highlight border-highlight' : 'text-paragraph border-background hover:cursor-pointer hover:text-main duration-100'} text-xl font-semibold mobile:px-2 mobile:text-sm`} value="tab4">
+                            Notification
+                        </Tabs.Trigger>
+                    </>
+                )}
             </Tabs.List>
-            <Tabs.Content className='h-full' value="booking">
-                <BookingTab />
-            </Tabs.Content>
-            <Tabs.Content className='h-full' value="current">
-                <UpcomingBookingsTab />
-            </Tabs.Content>
-            <Tabs.Content className='h-full' value="last">
-                <LastBookingsTab />
-            </Tabs.Content>
+
+            {user.role === 'admin' ? (
+                // Admin Content
+                <>
+                    <Tabs.Content className='h-full' value="tab1">
+                        <AdminReservationTab />
+                    </Tabs.Content>
+                    {/* <Tabs.Content className='h-full' value="tab2">
+                        <AdminPaymentTab />
+                    </Tabs.Content> */}
+                    <Tabs.Content className='h-full' value="tab3">
+                        <AdminCoworkingTab />
+                    </Tabs.Content>
+                    <Tabs.Content className='h-full' value="tab4">
+                        <AdminUserTab />
+                    </Tabs.Content>
+                </>
+            ) : (
+                // User Content
+                <>
+                    <Tabs.Content className='h-full' value="tab1">
+                        <ReservationTab />
+                    </Tabs.Content>
+                    <Tabs.Content className='h-full' value="tab2">
+                        <UpcomingBookingsTab />
+                    </Tabs.Content>
+                    
+                    <Tabs.Content className='h-full' value="tab4">
+                        <NotificationTab />
+                    </Tabs.Content>
+                </>
+            )}
         </Tabs.Root>
     )
 }

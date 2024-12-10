@@ -7,6 +7,7 @@ import { UserProvider } from './context/UserContext'
 import { PrivateRoutes } from './components/PrivateRoutes'
 import { Profile } from './pages/Profile'
 import { SignUp } from './pages/Signup'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   return (
@@ -22,6 +23,19 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                limit={5}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
     </UserProvider>
   )
 }

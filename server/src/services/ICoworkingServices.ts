@@ -13,4 +13,7 @@ export default interface ICoworkingServices {
     updateRoom(coworking_id: number, data: Partial<ICoworkingRequest>): Promise<Coworking>;
     deleteRoom(coworking_id: number): Promise<void>;
     updateRoomStatus(coworking_id: number, status: string): Promise<Coworking>;
+    getAvailableRooms(): Promise<Coworking[]>;
+
 } 
+
