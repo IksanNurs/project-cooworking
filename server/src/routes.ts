@@ -90,6 +90,10 @@ routes.put('/admin/reservasi/:reservation_id/status', (req: Request, res: Respon
     reservationController.updateStatusReservasi(req, res, reservationServices);
 });
 
+routes.delete('/admin/reservasi/:id', adminAuthMiddleware, (req: Request, res: Response) => {
+    reservationController.deleteReservation(req, res, reservationServices);
+});
+
 // Coworking routes untuk admin
 routes.get('/admin/coworking', (req: Request, res: Response) => {
     coworkingController.getAllRooms(req, res, coworkingServices);

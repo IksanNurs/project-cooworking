@@ -129,7 +129,7 @@ class ReservationServices implements IReservationServices {
         // Step 3: Format the response with availability based on reservation status
         const availableRooms = allRooms.map(room => {
             // Find the active reservation for this room (coworking_id)
-            const reservation = activeReservations.find(res => res.coworking_id === room.coworking_id);
+            const reservation = activeReservations?.find(res => res.coworking_id === room.coworking_id);
             
             let available = false; // Default to unavailable
             let reservation_id = null; // Default to no reservation
@@ -177,7 +177,7 @@ class ReservationServices implements IReservationServices {
 
     async getAllReservations(): Promise<Reservation[]> {
         return await reservationRepository.find({
-            relations: ['user', 'coworking'],
+            relations: ['user', 'coworking', 'reviews'],
             order: { waktu_mulai: 'DESC' }
         });
     }
@@ -256,6 +256,15 @@ class ReservationServices implements IReservationServices {
             totalActive,
             totalNonactive,
         };
+    }
+
+    async deleteReservation(reservationId: number): Promise<void> {
+        const reservation = await reservationRepository.findOneBy({ reservation_id: reservationId });
+        if (!reservation) {
+            throw new Error("reservation tidak ditemukan");
+        }
+
+        await reservationRepository.delete(reservationId);
     }
 }
 

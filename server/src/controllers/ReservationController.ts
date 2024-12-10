@@ -123,6 +123,15 @@ class ReservationController {
             return res.status(500).json({ message: error.message });
         }
     }
+    async deleteReservation(req: Request, res: Response, reservationServices: IReservationServices) {
+        try {
+            const reservationId = Number(req.params.id);
+            await reservationServices.deleteReservation(reservationId);
+            return res.status(200).json({ message: "reservation berhasil dihapus" });
+        } catch (error: any) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 const reservationController = new ReservationController();

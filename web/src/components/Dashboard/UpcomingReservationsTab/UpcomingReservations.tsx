@@ -8,23 +8,7 @@ export const UpcomingBookings = (props: IUpcomingBooking) => {
 
     return (
         <>
-            <div className=" w-full min-h-[300px] bg-backgroundLight rounded-xl flex flex-col text-paragraph font-semibold text-lg px-3">
-            <h2 className="text-2xl text-highlight mb-6">Riwayat Reservation</h2>
-
-                <div className="overflow-x-auto relative">
-                    <div className="w-full h-full overflow-x-scroll">
-                        <table className="w-full min-w-[800px]">
-                            <thead>
-                                <tr className="text-left bg-background">
-                                    <th className="p-4">Room</th>
-                                    <th className="p-4">Start Time</th>
-                                    <th className="p-4">End Time</th>
-                                    <th className="p-4">Status</th>
-                                    <th className="p-4">Review</th>
-                                    <th className="p-4">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+         
                                 <tr className="border-b border-background">
                                     <td className="p-4">{props.coworking.no_ruang}</td>
                                     <td className="p-4">{new Date(props.waktu_mulai).toLocaleString()}</td>
@@ -54,19 +38,14 @@ export const UpcomingBookings = (props: IUpcomingBooking) => {
                                     )}
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            {showReviewModal && (
-                <ReviewModal 
-                    reservation_id={props.reservation_id}
-                    onClose={() => setShowReviewModal(false)}
-                    onSubmit={props.onReviewSubmit}
-                />
-            )}
+                          
+                        {showReviewModal && (
+                            <ReviewModal 
+                                reservation_id={props.reservation_id}
+                                onClose={() => setShowReviewModal(false)}
+                                onSubmit={props.onReviewSubmit}
+                            />
+                        )}
         </>
     )
 }

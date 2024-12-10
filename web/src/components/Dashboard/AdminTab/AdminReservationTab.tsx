@@ -4,7 +4,7 @@ import { useUser } from '../../../context/UserContext';
 import { Loading } from '../Loading';
 import { toast } from 'react-toastify';
 import { Interface } from 'readline';
-import { CheckCircle, XCircle } from 'phosphor-react';
+import { CheckCircle, Trash, XCircle } from 'phosphor-react';
 import Select from 'react-select';
 
 interface IReservation {
@@ -101,6 +101,19 @@ export const AdminReservationTab = () => {
         }
     };
     
+    const handleDeleteReservation = async (reservation_id: number) => {
+        if (window.confirm('Apakah Anda yakin ingin menghapus reservation ini?')) {
+            try {
+                await api.delete(`/admin/reservasi/${reservation_id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success('Reservation berhasil dihapus');
+                loadReservations();
+            } catch (error) {
+                toast.error('Gagal menghapus reservation');
+            }
+        }
+    };
 
     useEffect(() => {
         loadReservations();
@@ -152,6 +165,7 @@ export const AdminReservationTab = () => {
                             <th className="text-left p-4">Ruangan</th>
                             <th className="text-left p-4">Waktu Mulai</th>
                             <th className="text-left p-4">Waktu Selesai</th>
+                            <th className="text-left p-4">Review</th>
                             <th className="text-left p-4">Status</th>
                             <th className="text-left p-4">Aksi</th>
                         </tr>
@@ -164,6 +178,7 @@ export const AdminReservationTab = () => {
                                 <td className="p-4">{reservation.coworking.no_ruang}</td>
                                 <td className="p-4">{new Date(reservation.waktu_mulai).toLocaleString()}</td>
                                 <td className="p-4">{new Date(reservation.waktu_selesai).toLocaleString()}</td>
+                                <td className="p-4">{reservation.reviews[0]?.komentar}</td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded-full text-sm ${
                                         reservation.status_reservasi === 'pending' ? 'bg-yellow-200 text-yellow-800' :
@@ -174,8 +189,9 @@ export const AdminReservationTab = () => {
                                     </span>
                                 </td>
                                 <td className="p-4">
+                                <div className="flex gap-2">
                                 {reservation.status_reservasi === 'pending' && (
-                                        <div className="flex gap-2">
+                                        <div>
                                             <button
                                                 onClick={() => updateStatus(reservation.reservation_id, "aktif")}
                                                 className="p-2 hover:bg-background rounded-full text-success"
@@ -193,7 +209,7 @@ export const AdminReservationTab = () => {
                                         </div>
                                     )}
                                         {reservation.status_reservasi === 'aktif' && (
-                                        <div className="flex gap-2">
+                                        <div >
                                         <button
                                                 onClick={() => updateStatus(reservation.reservation_id, "nonaktif")}
                                                 className="p-2 hover:bg-background rounded-full text-attention"
@@ -204,7 +220,7 @@ export const AdminReservationTab = () => {
                                         </div>
                                     )}
                                       {reservation.status_reservasi === 'nonaktif' && (
-                                        <div className="flex gap-2">
+                                        <div>
                                              <button
                                                 onClick={() => updateStatus(reservation.reservation_id, "aktif")}
                                                 className="p-2 hover:bg-background rounded-full text-success"
@@ -214,6 +230,14 @@ export const AdminReservationTab = () => {
                                             </button>
                                         </div>
                                     )}
+
+                                    <button
+                                                 onClick={() => handleDeleteReservation(reservation.reservation_id)}
+                                                className="p-2 hover:bg-background rounded-full text-attention"
+                                            >
+                                                <Trash size={20} />
+                                    </button>
+                                    </div>
                                  
                                 </td>
                             </tr>
@@ -221,20 +245,6 @@ export const AdminReservationTab = () => {
                     </tbody>
                 </table>
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
               {isAddingReservation && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -266,17 +276,8 @@ export const AdminReservationTab = () => {
                                           ...formData,
                                           waktu_mulai: e.target.value
                                       })}
-                                      className="p-2 rounded bg-background border border-paragraph focus:border-highlight focus:outline-none w-full"
+                                      className="p-2 rounded bg-background border border-paragraph focus:border-highlight focus:outline-none w-full text-paragraph"
                                   />
-                                
-
-
-
-
-
-
-
-
 
                                   <input
                                       type="datetime-local"
@@ -284,30 +285,9 @@ export const AdminReservationTab = () => {
                                           ...formData,
                                           waktu_selesai: e.target.value
                                       })}
-                                      className="p-2 rounded bg-background border border-paragraph focus:border-highlight focus:outline-none w-full"
+                                      className="p-2 rounded bg-background border border-paragraph focus:border-highlight focus:outline-none w-full text-paragraph"
                                   />
                               </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                               <div className="flex justify-end gap-2 mt-6">
                                   <button
                                       type="button"

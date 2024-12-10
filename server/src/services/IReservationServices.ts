@@ -30,4 +30,5 @@ export default interface IReservationServices {
         menungguPembayaran: number;
         reservasiAktif: number;
     }>;
+    deleteReservation(reservationId: number): Promise<void>;
 } 
